@@ -1,0 +1,32 @@
+marker_stream:
+  name: RestingStateMarkers
+  type: Markers
+  source_id: task_resting_markers
+
+protocol:
+  task_name: RestingState
+  pre_fixation_seconds: 2.0
+  repetitions: 5
+  starts_with: eyes_open
+  eyes_closed:
+    total_seconds: 40.0
+    clean_start_after_instruction: 15.0
+    clean_end_after_instruction: 29.0
+  eyes_open:
+    total_seconds: 20.0
+    clean_start_after_instruction: 5.0
+    clean_end_after_instruction: 19.0
+
+audio:
+  close_eyes: assets/audio/close_eyes.wav
+  open_eyes: assets/audio/open_eyes.wav
+
+display:
+  fullscreen: true
+  background_color: [-0.1, -0.1, -0.1]
+  fixation_color: [1, 1, 1]
+  fixation_height: 0.08
+
+required_streams:
+  eeg_name_contains: ARTISE
+  gaze_name_contains: Gaze
