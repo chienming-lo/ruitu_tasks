@@ -65,8 +65,8 @@ uv python list
 
 ```powershell
 cd C:\Users\%USERNAME%\Desktop
-git clone <你的 repo URL> task-resting
-cd task-resting
+git clone https://github.com/chienming-lo/ruitu_tasks.git
+cd ruitu_tasks\task_rest
 uv venv --python 3.10
 uv sync --extra dev
 ```
@@ -124,7 +124,7 @@ uv run python -c "import psychopy; print('psychopy ok')"
 4. 在專案資料夾測 PsychoPy dry run：
 
    ```powershell
-   cd C:\Users\%USERNAME%\Desktop\task-resting
+   cd C:\Users\%USERNAME%\Desktop\ruitu_tasks\task_rest
    uv run python -m resting_task.run_resting --config configs\resting_hbn_inspired.yaml --dry-run
    ```
 
@@ -198,7 +198,7 @@ uv run python -c "import psychopy; print('psychopy ok')"
 6. 用 Python 做一次 stream check：
 
    ```powershell
-   cd C:\Users\%USERNAME%\Desktop\task-resting
+   cd C:\Users\%USERNAME%\Desktop\ruitu_tasks\task_rest
    uv run python tools\check_lsl_streams.py --config configs\resting_hbn_inspired.yaml --timeout 5
    ```
 

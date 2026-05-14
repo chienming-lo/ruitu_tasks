@@ -156,7 +156,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "task-resting"
+name = "task_rest"
 version = "0.1.0"
 description = "PsychoPy resting-state task with LSL markers for EEG and eye tracking."
 requires-python = ">=3.10,<3.12"

@@ -5492,7 +5492,7 @@ wheels = [
 ]
 
 [[package]]
-name = "resting-task"
+name = "task-rest"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
