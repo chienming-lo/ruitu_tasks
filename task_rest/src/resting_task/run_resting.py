@@ -70,7 +70,8 @@ def run_task(
         open_audio = sound.Sound(str(cfg.audio.open_eyes))
         clock = core.Clock()
 
-        if not _wait_for_start(start_message, win, event, core):
+        mouse = event.Mouse(win=win)
+        if not _wait_for_start(start_message, win, event, core, mouse):
             return
 
         clock.reset()
@@ -110,12 +111,12 @@ def run_task(
             win.close()
 
 
-def _wait_for_start(start_message: Any, win: Any, event: Any, core: Any) -> bool:
+def _wait_for_start(start_message: Any, win: Any, event: Any, core: Any, mouse: Any) -> bool:
     while True:
         keys = event.getKeys(["space", "escape"])
         if "escape" in keys:
             return False
-        if "space" in keys or event.getMouseButtons()[0]:
+        if "space" in keys or mouse.getPressed()[0]:
             return True
 
         start_message.draw()

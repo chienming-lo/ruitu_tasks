@@ -118,7 +118,12 @@ class _FakeEventModule:
                 return ["space"]
         return []
 
-    def getMouseButtons(self):
+    def Mouse(self, **_kwargs):
+        return _FakeMouse()
+
+
+class _FakeMouse:
+    def getPressed(self):
         return [0, 0, 0]
 
 
