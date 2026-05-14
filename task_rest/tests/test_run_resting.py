@@ -51,14 +51,16 @@ def test_run_task_emits_repeated_instruction_markers():
     schedule = build_schedule(cfg.protocol)
     outlet = _FakeOutlet()
     sound_module = _FakeSoundModule()
+    visual_module = _FakeVisualModule()
+    core_module = _FakeCoreModule()
 
     run_resting.run_task(
         cfg,
         schedule,
         outlet,
         {
-            "visual": _FakeVisualModule(),
-            "core": _FakeCoreModule(),
+            "visual": visual_module,
+            "core": core_module,
             "event": _FakeEventModule(),
             "sound": sound_module,
         },
@@ -70,6 +72,8 @@ def test_run_task_emits_repeated_instruction_markers():
     assert labels == [event.label for event in schedule]
     assert sound_module.play_counts[str(cfg.audio.open_eyes)] == 5
     assert sound_module.play_counts[str(cfg.audio.close_eyes)] == 5
+    assert "實驗結束" in visual_module.drawn_texts
+    assert 3.0 in core_module.waits
 
 
 class _FakeOutlet:
@@ -93,11 +97,13 @@ class _FakeClock:
 
 
 class _FakeCoreModule:
+    def __init__(self):
+        self.waits = []
+
     Clock = _FakeClock
 
-    @staticmethod
-    def wait(_seconds):
-        return None
+    def wait(self, seconds):
+        self.waits.append(seconds)
 
 
 class _FakeEventModule:
@@ -107,7 +113,8 @@ class _FakeEventModule:
 
 
 class _FakeWindow:
-    def __init__(self, **_kwargs):
+    def __init__(self, drawn_texts, **_kwargs):
+        self.drawn_texts = drawn_texts
         self.closed = False
 
     def flip(self):
@@ -118,15 +125,21 @@ class _FakeWindow:
 
 
 class _FakeTextStim:
-    def __init__(self, **_kwargs):
-        pass
+    def __init__(self, **kwargs):
+        self.text = kwargs["text"]
+        self.win = kwargs["win"]
 
     def draw(self):
-        return None
+        self.win.drawn_texts.append(self.text)
 
 
 class _FakeVisualModule:
-    Window = _FakeWindow
+    def __init__(self):
+        self.drawn_texts = []
+
+    def Window(self, **kwargs):
+        return _FakeWindow(self.drawn_texts, **kwargs)
+
     TextStim = _FakeTextStim
 
 

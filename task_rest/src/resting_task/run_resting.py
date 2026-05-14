@@ -54,6 +54,12 @@ def run_task(
             color=cfg.display.fixation_color,
             height=cfg.display.fixation_height,
         )
+        end_message = visual.TextStim(
+            win=win,
+            text="實驗結束",
+            color=cfg.display.fixation_color,
+            height=cfg.display.fixation_height,
+        )
         close_audio = sound.Sound(str(cfg.audio.close_eyes))
         open_audio = sound.Sound(str(cfg.audio.open_eyes))
         clock = core.Clock()
@@ -61,9 +67,11 @@ def run_task(
         clock.reset()
         sent: set[int] = set()
         task_end = schedule[-1].onset
+        escaped = False
 
         while clock.getTime() <= task_end + 0.1:
             if "escape" in event.getKeys(["escape"]):
+                escaped = True
                 break
 
             elapsed = clock.getTime()
@@ -83,6 +91,11 @@ def run_task(
             fixation.draw()
             win.flip()
             core.wait(0.005)
+
+        if not escaped and len(sent) == len(schedule):
+            end_message.draw()
+            win.flip()
+            core.wait(3.0)
     finally:
         if win is not None:
             win.close()
