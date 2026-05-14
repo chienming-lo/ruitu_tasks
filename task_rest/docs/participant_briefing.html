@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>等等會看到什麼？</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --page: #f5f7fb;
+      --ink: #142033;
+      --muted: #516071;
+      --stage: #737373;
+      --panel: #ffffff;
+      --line: #d8dee8;
+      --blue: #176b87;
+      --blue-soft: #e6f4f8;
+      --green: #2f7d4f;
+      --green-soft: #e8f6ed;
+      --orange: #a85d16;
+      --orange-soft: #fff1df;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--page);
+      color: var(--ink);
+    }
+
+    main {
+      width: min(1080px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 44px;
+    }
+
+    header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 6px 0 20px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.2rem, 5vw, 4.6rem);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 2vw, 1.35rem);
+      font-weight: 700;
+    }
+
+    .duration {
+      min-width: 132px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      text-align: center;
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+
+    .stage-wrap {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.6fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .stage {
+      position: relative;
+      min-height: 430px;
+      border-radius: 8px;
+      background: var(--stage);
+      border: 1px solid #626262;
+      overflow: hidden;
+      box-shadow: 0 18px 48px rgba(20, 32, 51, 0.18);
+    }
+
+    .fixation {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-family: Arial, sans-serif;
+      font-size: clamp(4rem, 12vw, 8rem);
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    .stage-label {
+      position: absolute;
+      left: 18px;
+      bottom: 16px;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .sound-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 14px;
+      padding: 20px;
+      border-radius: 8px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }
+
+    h2 {
+      margin: 0 0 4px;
+      font-size: clamp(1.5rem, 3vw, 2.15rem);
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .hint {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 1.08rem;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .sound-button {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      min-height: 92px;
+      padding: 14px 16px;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+      font: inherit;
+      transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+    }
+
+    .sound-button:hover,
+    .sound-button:focus-visible {
+      transform: translateY(-1px);
+      border-color: currentColor;
+      outline: none;
+      box-shadow: 0 10px 26px rgba(20, 32, 51, 0.14);
+    }
+
+    .sound-button.open {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .sound-button.close {
+      background: var(--orange-soft);
+      color: var(--orange);
+    }
+
+    .speaker {
+      position: relative;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .speaker::before {
+      content: "";
+      position: absolute;
+      left: 15px;
+      top: 19px;
+      width: 11px;
+      height: 16px;
+      background: white;
+      border-radius: 2px;
+    }
+
+    .speaker::after {
+      content: "";
+      position: absolute;
+      left: 24px;
+      top: 15px;
+      width: 18px;
+      height: 24px;
+      border: 4px solid white;
+      border-left: 0;
+      border-radius: 0 24px 24px 0;
+    }
+
+    .button-title {
+      display: block;
+      font-size: 1.32rem;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .button-subtitle {
+      display: block;
+      margin-top: 4px;
+      color: rgba(20, 32, 51, 0.68);
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .rules {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .rule {
+      min-height: 132px;
+      padding: 18px;
+      border-radius: 8px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }
+
+    .rule-number {
+      display: inline-grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      margin-bottom: 10px;
+      border-radius: 50%;
+      background: var(--blue);
+      color: white;
+      font-weight: 900;
+    }
+
+    .rule strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 1.28rem;
+    }
+
+    .rule span {
+      color: var(--muted);
+      font-size: 1.02rem;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .status {
+      min-height: 1.4em;
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+      font-weight: 700;
+    }
+
+    audio {
+      display: none;
+    }
+
+    @media (max-width: 860px) {
+      header,
+      .stage-wrap,
+      .rules {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        display: block;
+      }
+
+      .duration {
+        display: inline-block;
+        margin-top: 14px;
+      }
+
+      .stage {
+        min-height: 360px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>等等會看到什麼？</h1>
+        <p class="subtitle">看中間的十字，聽聲音做動作。</p>
+      </div>
+      <div class="duration">約 5 分鐘</div>
+    </header>
+
+    <section class="stage-wrap" aria-label="實驗畫面與聲音預覽">
+      <div class="stage" aria-label="正式實驗時的螢幕畫面">
+        <div class="fixation">+</div>
+        <div class="stage-label">正式實驗會像這樣：灰色畫面，中間一個白色十字</div>
+      </div>
+
+      <div class="sound-panel">
+        <h2>先聽聽看</h2>
+        <p class="hint">正式開始後，電腦會播放這兩種聲音。</p>
+
+        <button class="sound-button open" type="button" data-audio="open-audio">
+          <span class="speaker" aria-hidden="true"></span>
+          <span>
+            <span class="button-title">播放張眼聲音</span>
+            <span class="button-subtitle">聽到後，張開眼睛看十字</span>
+          </span>
+        </button>
+
+        <button class="sound-button close" type="button" data-audio="close-audio">
+          <span class="speaker" aria-hidden="true"></span>
+          <span>
+            <span class="button-title">播放閉眼聲音</span>
+            <span class="button-subtitle">聽到後，輕輕閉上眼睛</span>
+          </span>
+        </button>
+
+        <p class="status" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="rules" aria-label="三個小提醒">
+      <div class="rule">
+        <span class="rule-number">1</span>
+        <strong>坐好放鬆</strong>
+        <span>手腳舒服放好，身體不要一直動。</span>
+      </div>
+      <div class="rule">
+        <span class="rule-number">2</span>
+        <strong>聽聲音</strong>
+        <span>張眼、閉眼會輪流出現 5 次。</span>
+      </div>
+      <div class="rule">
+        <span class="rule-number">3</span>
+        <strong>不舒服就說</strong>
+        <span>想休息或想停止，馬上告訴老師。</span>
+      </div>
+    </section>
+  </main>
+
+  <audio id="open-audio" preload="auto" src="../assets/audio/open_eyes.wav"></audio>
+  <audio id="close-audio" preload="auto" src="../assets/audio/close_eyes.wav"></audio>
+
+  <script>
+    const buttons = document.querySelectorAll("[data-audio]");
+    const status = document.querySelector(".status");
+    const allAudio = Array.from(document.querySelectorAll("audio"));
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", async () => {
+        const audio = document.getElementById(button.dataset.audio);
+
+        allAudio.forEach((item) => {
+          item.pause();
+          item.currentTime = 0;
+        });
+
+        try {
+          await audio.play();
+          status.textContent = button.querySelector(".button-title").textContent;
+        } catch (_error) {
+          status.textContent = "如果沒有聲音，請確認電腦音量已打開。";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
