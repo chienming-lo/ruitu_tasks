@@ -44,3 +44,108 @@ def test_main_dry_run_does_not_load_psychopy_or_create_lsl_outlet(monkeypatch, c
 
     assert run_resting.main() == 0
     assert "instructed_toCloseEyes" in capsys.readouterr().out
+
+
+def test_run_task_emits_repeated_instruction_markers():
+    cfg = load_config(Path("configs/resting_hbn_inspired.yaml"))
+    schedule = build_schedule(cfg.protocol)
+    outlet = _FakeOutlet()
+    sound_module = _FakeSoundModule()
+
+    run_resting.run_task(
+        cfg,
+        schedule,
+        outlet,
+        {
+            "visual": _FakeVisualModule(),
+            "core": _FakeCoreModule(),
+            "event": _FakeEventModule(),
+            "sound": sound_module,
+        },
+    )
+
+    labels = [payload.label for payload in outlet.payloads]
+    assert labels.count("instructed_toOpenEyes") == 5
+    assert labels.count("instructed_toCloseEyes") == 5
+    assert labels == [event.label for event in schedule]
+    assert sound_module.play_counts[str(cfg.audio.open_eyes)] == 5
+    assert sound_module.play_counts[str(cfg.audio.close_eyes)] == 5
+
+
+class _FakeOutlet:
+    def __init__(self):
+        self.payloads = []
+
+    def push(self, payload):
+        self.payloads.append(payload)
+
+
+class _FakeClock:
+    def __init__(self):
+        self.elapsed = 0.0
+
+    def reset(self):
+        self.elapsed = 0.0
+
+    def getTime(self):
+        self.elapsed += 1.0
+        return self.elapsed
+
+
+class _FakeCoreModule:
+    Clock = _FakeClock
+
+    @staticmethod
+    def wait(_seconds):
+        return None
+
+
+class _FakeEventModule:
+    @staticmethod
+    def getKeys(_keys):
+        return []
+
+
+class _FakeWindow:
+    def __init__(self, **_kwargs):
+        self.closed = False
+
+    def flip(self):
+        return None
+
+    def close(self):
+        self.closed = True
+
+
+class _FakeTextStim:
+    def __init__(self, **_kwargs):
+        pass
+
+    def draw(self):
+        return None
+
+
+class _FakeVisualModule:
+    Window = _FakeWindow
+    TextStim = _FakeTextStim
+
+
+class _FakeSound:
+    def __init__(self, path, play_counts):
+        self.path = path
+        self.play_counts = play_counts
+
+    def stop(self):
+        return None
+
+    def play(self):
+        self.play_counts[self.path] = self.play_counts.get(self.path, 0) + 1
+
+
+class _FakeSoundModule:
+    def __init__(self):
+        self.play_counts = {}
+
+    def Sound(self, path):
+        self.play_counts.setdefault(path, 0)
+        return _FakeSound(path, self.play_counts)

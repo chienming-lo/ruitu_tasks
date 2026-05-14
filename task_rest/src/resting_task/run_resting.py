@@ -59,7 +59,7 @@ def run_task(
         clock = core.Clock()
 
         clock.reset()
-        sent: set[str] = set()
+        sent: set[int] = set()
         task_end = schedule[-1].onset
 
         while clock.getTime() <= task_end + 0.1:
@@ -67,12 +67,12 @@ def run_task(
                 break
 
             elapsed = clock.getTime()
-            for scheduled_event in schedule:
+            for event_index, scheduled_event in enumerate(schedule):
                 label = scheduled_event.label
-                if label in sent or elapsed < scheduled_event.onset:
+                if event_index in sent or elapsed < scheduled_event.onset:
                     continue
                 _push_event(cfg, outlet, scheduled_event, elapsed)
-                sent.add(label)
+                sent.add(event_index)
                 if label == "instructed_toCloseEyes":
                     close_audio.stop()
                     close_audio.play()
