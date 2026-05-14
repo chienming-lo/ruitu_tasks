@@ -22,6 +22,7 @@ def test_load_default_config_has_expected_protocol_values():
     assert cfg.protocol.eyes_open.clean_end_after_instruction == 19.0
     assert cfg.audio.close_eyes == Path.cwd() / "assets/audio/close_eyes.wav"
     assert cfg.audio.open_eyes == Path.cwd() / "assets/audio/open_eyes.wav"
+    assert cfg.audio.end == Path.cwd() / "assets/audio/end.wav"
 
 
 def test_load_config_rejects_missing_audio_key(tmp_path):
@@ -83,6 +84,7 @@ protocol:
 audio:
   close_eyes: assets/audio/close_eyes.wav
   open_eyes: assets/audio/open_eyes.wav
+  end: assets/audio/end.wav
 display:
   fullscreen: true
   background_color: [-0.1, -0.1, -0.1]

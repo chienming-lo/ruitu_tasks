@@ -68,6 +68,7 @@ def run_task(
         )
         close_audio = sound.Sound(str(cfg.audio.close_eyes))
         open_audio = sound.Sound(str(cfg.audio.open_eyes))
+        end_audio = sound.Sound(str(cfg.audio.end))
         clock = core.Clock()
 
         mouse = event.Mouse(win=win)
@@ -105,6 +106,8 @@ def run_task(
         if not escaped and len(sent) == len(schedule):
             end_message.draw()
             win.flip()
+            end_audio.stop()
+            end_audio.play()
             core.wait(3.0)
     finally:
         if win is not None:
@@ -142,7 +145,7 @@ def _push_event(
 
 
 def _require_audio_files(cfg: Any) -> None:
-    missing = [path for path in (cfg.audio.close_eyes, cfg.audio.open_eyes) if not path.exists()]
+    missing = [path for path in (cfg.audio.close_eyes, cfg.audio.open_eyes, cfg.audio.end) if not path.exists()]
     if missing:
         missing_list = "\n".join(str(path) for path in missing)
         raise FileNotFoundError(f"Missing instruction audio files:\n{missing_list}")

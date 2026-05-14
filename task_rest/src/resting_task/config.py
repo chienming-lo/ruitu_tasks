@@ -41,6 +41,7 @@ class ProtocolConfig:
 class AudioConfig:
     close_eyes: Path
     open_eyes: Path
+    end: Path
 
 
 @dataclass(frozen=True)
@@ -91,6 +92,7 @@ def load_config(config_path: str | Path, repo_root: str | Path | None = None) ->
     _require_path(raw, "protocol.eyes_open.clean_end_after_instruction")
     _require_path(raw, "audio.close_eyes")
     _require_path(raw, "audio.open_eyes")
+    _require_path(raw, "audio.end")
     _require_path(raw, "display.fullscreen")
     _require_path(raw, "display.background_color")
     _require_path(raw, "display.fixation_color")
@@ -121,6 +123,7 @@ def load_config(config_path: str | Path, repo_root: str | Path | None = None) ->
         audio=AudioConfig(
             close_eyes=_resolve_repo_path(root, str(audio["close_eyes"])),
             open_eyes=_resolve_repo_path(root, str(audio["open_eyes"])),
+            end=_resolve_repo_path(root, str(audio["end"])),
         ),
         display=DisplayConfig(
             fullscreen=bool(display["fullscreen"]),

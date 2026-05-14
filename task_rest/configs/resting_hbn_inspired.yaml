@@ -20,6 +20,7 @@ protocol:
 audio:
   close_eyes: assets/audio/close_eyes.wav
   open_eyes: assets/audio/open_eyes.wav
+  end: assets/audio/end.wav
 
 display:
   fullscreen: true
