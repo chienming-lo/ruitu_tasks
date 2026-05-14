@@ -33,7 +33,7 @@ python -m resting_task.run_resting --config configs/resting_hbn_inspired.yaml --
 302.000s task_end task
 ```
 
-正式 task 會顯示 fixation cross，從第 2 秒開始播放張眼/閉眼語音並送 marker，結束於第 302 秒。實際 LSL marker 只送 `task_start`、`instructed_toCloseEyes`、`instructed_toOpenEyes`、`task_end` 這些 label；不要送 clean-window marker。
+正式 task 啟動後會先顯示「準備好後按空白鍵或滑鼠開始」，此時 `RestingStateMarkers` stream 已建立，但還不會送出 `task_start`。確認 LabRecorder 已開始錄製後，回到桌機按空白鍵或滑鼠，才會顯示 fixation cross、從第 2 秒開始播放張眼/閉眼語音並送 marker，結束於第 302 秒。實際 LSL marker 只送 `task_start`、`instructed_toCloseEyes`、`instructed_toOpenEyes`、`task_end` 這些 label；不要送 clean-window marker。
 
 ## 筆電 LabRecorder
 
@@ -50,14 +50,16 @@ python -m resting_task.run_resting --config configs/resting_hbn_inspired.yaml --
 sub-%p_task-RestingState_run-%n.xdf
 ```
 
-6. 先在 LabRecorder 按 `Start`。
-7. 再回桌機執行正式刺激：
+6. 回桌機執行正式刺激，等待畫面出現後先不要開始：
 
 ```powershell
 python -m resting_task.run_resting --config configs/resting_hbn_inspired.yaml
 ```
 
-8. task 結束後再按 LabRecorder `Stop`。
+7. 在 LabRecorder 按 `Update`，確認 `RestingStateMarkers` 已出現並被勾選。
+8. 先在 LabRecorder 按 `Start`。
+9. 回桌機按空白鍵或滑鼠正式開始刺激。
+10. task 結束後再按 LabRecorder `Stop`。
 
 ## 錄完驗證
 

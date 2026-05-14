@@ -72,6 +72,7 @@ def test_run_task_emits_repeated_instruction_markers():
     assert labels == [event.label for event in schedule]
     assert sound_module.play_counts[str(cfg.audio.open_eyes)] == 5
     assert sound_module.play_counts[str(cfg.audio.close_eyes)] == 5
+    assert "準備好後按空白鍵或滑鼠開始" in visual_module.drawn_texts
     assert "實驗結束" in visual_module.drawn_texts
     assert 3.0 in core_module.waits
 
@@ -107,9 +108,18 @@ class _FakeCoreModule:
 
 
 class _FakeEventModule:
-    @staticmethod
-    def getKeys(_keys):
+    def __init__(self):
+        self.start_checks = 0
+
+    def getKeys(self, keys):
+        if "space" in keys:
+            self.start_checks += 1
+            if self.start_checks >= 2:
+                return ["space"]
         return []
+
+    def getMouseButtons(self):
+        return [0, 0, 0]
 
 
 class _FakeWindow:

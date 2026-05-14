@@ -153,10 +153,12 @@ uv run python -c "import psychopy; print('psychopy ok')"
 
 7. 預期行為：
 
-   - 全螢幕顯示 fixation cross。
+   - 全螢幕先顯示「準備好後按空白鍵或滑鼠開始」。
+   - 按空白鍵或滑鼠後才開始正式計時。
+   - 正式開始後顯示 fixation cross。
    - 第 2 秒播放張眼語音並送 `instructed_toOpenEyes`。
    - 之後 EO 20 秒、EC 40 秒交替，各 5 次。
-   - 第 302 秒結束並送 `task_end`。
+   - 第 302 秒結束並送 `task_end`，接著顯示「實驗結束」3 秒。
 
 ## Windows 筆電：LabRecorder + EEG 收訊
 

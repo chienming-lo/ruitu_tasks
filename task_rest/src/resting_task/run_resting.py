@@ -54,6 +54,12 @@ def run_task(
             color=cfg.display.fixation_color,
             height=cfg.display.fixation_height,
         )
+        start_message = visual.TextStim(
+            win=win,
+            text="準備好後按空白鍵或滑鼠開始",
+            color=cfg.display.fixation_color,
+            height=cfg.display.fixation_height,
+        )
         end_message = visual.TextStim(
             win=win,
             text="實驗結束",
@@ -63,6 +69,9 @@ def run_task(
         close_audio = sound.Sound(str(cfg.audio.close_eyes))
         open_audio = sound.Sound(str(cfg.audio.open_eyes))
         clock = core.Clock()
+
+        if not _wait_for_start(start_message, win, event, core):
+            return
 
         clock.reset()
         sent: set[int] = set()
@@ -99,6 +108,19 @@ def run_task(
     finally:
         if win is not None:
             win.close()
+
+
+def _wait_for_start(start_message: Any, win: Any, event: Any, core: Any) -> bool:
+    while True:
+        keys = event.getKeys(["space", "escape"])
+        if "escape" in keys:
+            return False
+        if "space" in keys or event.getMouseButtons()[0]:
+            return True
+
+        start_message.draw()
+        win.flip()
+        core.wait(0.01)
 
 
 def _push_event(
